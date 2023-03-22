@@ -1,4 +1,4 @@
-git+https://github.com/Meta-Genome-Org/core_main_app.git#egg=core_main_app[mongodb]
+core_main_app[mongodb]==2.2.*
 core_composer_app==2.2.*
 core_curate_app==2.2.*
 core_dashboard_common_app==2.2.*
