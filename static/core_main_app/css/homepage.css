@@ -13,8 +13,12 @@
     font-size: 0.6em;
 }
 
-.small-bottom-pad {
-    padding-bottom: 5px;
+.hide-top-border {
+    border-top: 0 !important;
+}
+
+.hide-bottom-border {
+    border-bottom: 0 !important;
 }
 
 .iframe-container {
