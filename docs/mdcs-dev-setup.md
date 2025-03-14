@@ -20,14 +20,21 @@ git checkout master
 
 ## Python environment
 
-Download and install [Anaconda](https://www.anaconda.com/download/) to configure 
+Download and install [Pyenv](https://github.com/pyenv/pyenv#installation) and 
+[Pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv#installation) to configure 
 a python environment with all the required python packages. 
 
 ### Create a new environment
 
+Install a version of Python supported by the CDCS (see `python_requires` in [setup.py](https://github.com/usnistgov/core_main_app/blob/master/setup.py)):
+
 ```shell
-conda create --name core python=3.7
-Proceed ([y]/n)? y
+pyenv install 3.8
+```
+
+```shell
+pyenv virtualenv 3.8 core
+pyenv virtualenvs
 ```
 
 ### Install required python packages
@@ -35,7 +42,7 @@ Proceed ([y]/n)? y
 Activate the environment and install the required python packages.
 
 ```
-conda activate core
+pyenv activate core
 cd mdcs
 pip install -r requirements.txt
 pip install -r requirements.core.txt
@@ -171,8 +178,31 @@ docker-compose down -v
 
 ## Connect CDCS server to the stack
 
+Copy the `.env.dev.example` file from the mdcs folder and rename it `.env`. This file should not be pushed to the git repository.
+Then fill the values in `.env` file. Make sure to use the same credentials used to initialize the dev components from the previous section.
+This `.env` file also has a few extra settings that are specific to the Django/CDCS server, make sure to provide a value for these.
+
+```shell
+# TODO: Set values for the databases configuration and credentials 
+#  (Set the same values used in .env for docker-compose.yml file)
+POSTGRES_USER=
+POSTGRES_PASS=
+POSTGRES_DB=
+MONGO_ADMIN_USER=
+MONGO_ADMIN_PASS=
+MONGO_USER=
+MONGO_PASS=
+MONGO_DB=
+REDIS_PASS=
+
+# TODO: Set Django/CDCS settings
+DJANGO_SECRET_KEY=
+SERVER_URI=
+SERVER_NAME=
+```
+
 See [installation_instructions](https://github.com/usnistgov/MDCS/blob/master/docs/mdcs-2.0-install-pypi.md#edit-and-save-install_pathmdcs-mastermdcssettingspy-file)
-about CDCS settings and creating a `.env` file for development.
+for more information about CDCS settings.
 
 ## PyCharm
 
@@ -186,23 +216,27 @@ Open project: Select workspace folder
 
 PyCharm > Preferences > Project Interpreter
 
-Select /Users/user/anaconda3/envs/core/bin/python
+Select /path/to/env/core/bin/python
 
 ### Add run configurations
 
 #### Migrate
 
-Script:             project/manage.py
+Script:                 mdcs/manage.py
 
-Script parameters:  migrate
+Script parameters:      migrate
+
+Environment variables:  DJANGO_SETTINGS_MODULE=mdcs.dev_settings
 
 Run migrate to initialize the database (and then again anytime a change is made to models/permissions).
 
 #### Create a Super User
 
-Script:             project/manage.py
+Script:                 mdcs/manage.py
 
-Script parameters:  createsuperuser
+Script parameters:      createsuperuser
+
+Environment variables:  DJANGO_SETTINGS_MODULE=mdcs.dev_settings
 
 Emulate terminal in output console
 
@@ -210,18 +244,22 @@ Run createsuperuser to create the first user of the system (and then anytime the
 
 #### Start Celery worker (optional)
 
-Script:             /Users/user/anaconda3/envs/core/bin/celery
+Script:                 /path/to/env/core/bin/celery
 
-Script parameters:  -A mdcs worker -E -l debug -P solo
+Script parameters:      -A mdcs worker -E -l debug -P solo
+
+Environment variables:  DJANGO_SETTINGS_MODULE=mdcs.dev_settings
 
 Run celery and have it running in background (can be run in debug mode).
 
 
 #### Run Server
 
-Script:             project/manage.py
+Script:                 mdcs/manage.py
 
-Script parameters:  runserver
+Script parameters:      runserver
+
+Environment variables:  DJANGO_SETTINGS_MODULE=mdcs.dev_settings
 
 Run runserver to deploy the webserver (can be run in debug mode).
 

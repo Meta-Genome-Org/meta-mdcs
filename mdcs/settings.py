@@ -2,11 +2,12 @@
 Django settings for mdcs project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/3.2/topics/settings/
+https://docs.djangoproject.com/en/4.2/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/3.2/ref/settings/
+https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+
 import os  # noqa
 
 from core_main_app.utils.logger.logger_utils import (
@@ -39,21 +40,29 @@ ALLOWED_HOSTS = (
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "HOST": os.environ["POSTGRES_HOST"]
-        if "POSTGRES_HOST" in os.environ
-        else None,
-        "PORT": int(os.environ["POSTGRES_PORT"])
-        if "POSTGRES_PORT" in os.environ
-        else 5432,
-        "NAME": os.environ["POSTGRES_DB"]
-        if "POSTGRES_DB" in os.environ
-        else None,
-        "USER": os.environ["POSTGRES_USER"]
-        if "POSTGRES_USER" in os.environ
-        else None,
-        "PASSWORD": os.environ["POSTGRES_PASS"]
-        if "POSTGRES_PASS" in os.environ
-        else None,
+        "HOST": (
+            os.environ["POSTGRES_HOST"]
+            if "POSTGRES_HOST" in os.environ
+            else None
+        ),
+        "PORT": (
+            int(os.environ["POSTGRES_PORT"])
+            if "POSTGRES_PORT" in os.environ
+            else 5432
+        ),
+        "NAME": (
+            os.environ["POSTGRES_DB"] if "POSTGRES_DB" in os.environ else None
+        ),
+        "USER": (
+            os.environ["POSTGRES_USER"]
+            if "POSTGRES_USER" in os.environ
+            else None
+        ),
+        "PASSWORD": (
+            os.environ["POSTGRES_PASS"]
+            if "POSTGRES_PASS" in os.environ
+            else None
+        ),
     }
 }
 
@@ -87,12 +96,12 @@ INSTALLED_APPS = (
     "oauth2_provider",
     # Extra apps
     "rest_framework",
-    "drf_yasg",
+    "rest_framework.authtoken",
+    "drf_spectacular",
     "menu",
-    "tz_detect",
-    "defender",
     "captcha",
     "django_celery_beat",
+    "fontawesomefree",
     # Core apps
     "core_main_app",
     "core_exporters_app",
@@ -131,11 +140,10 @@ MIDDLEWARE = (
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "defender.middleware.FailedLoginMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.security.SecurityMiddleware",
-    "tz_detect.middleware.TimezoneMiddleware",
+    "core_main_app.middleware.timezone.TimezoneMiddleware",
 )
 
 
@@ -163,11 +171,11 @@ WSGI_APPLICATION = "mdcs.wsgi.application"
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
+# https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = os.getenv("TZ", "UTC")
 
 USE_I18N = True
 
@@ -178,7 +186,7 @@ USE_TZ = True
 LOCALE_PATHS = (os.path.join(BASE_DIR, "locale"),)
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "/static/"
 STATIC_ROOT = "static.prod"
@@ -191,10 +199,10 @@ STATICFILES_FINDERS = (
 
 STATICFILES_DIRS = ("static",)
 
-# https://docs.djangoproject.com/en/3.2/topics/files/
+# https://docs.djangoproject.com/en/4.2/topics/files/
 MEDIA_ROOT = "media"
 
-# https://docs.djangoproject.com/en/3.2/ref/contrib/sites/
+# https://docs.djangoproject.com/en/4.2/ref/contrib/sites/
 SITE_ID = 1
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -251,50 +259,23 @@ AUTH_PASSWORD_VALIDATORS = [
 # Django REST Framework
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
+        "rest_framework.authentication.TokenAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-# drf-yasg
-SWAGGER_SETTINGS = {
-    "exclude_namespaces": [],  # List URL namespaces to ignore
-    "api_version": "1.1",  # Specify your API's version
-    "api_path": "/",  # Specify the path to your API not a root level
-    "enabled_methods": [  # Specify which methods to enable in Swagger UI
-        "get",
-        "post",
-        "put",
-        "patch",
-        "delete",
-    ],
-    "api_key": "",  # An API key
-    "is_authenticated": False,  # Set to True to enforce user authentication,
-    "is_superuser": False,  # Set to True to enforce admin only access
-    "LOGIN_URL": "core_main_app_login",
-    "LOGOUT_URL": "core_main_app_logout",
+# drf-spectacular
+SPECTACULAR_SETTINGS = {
+    "TITLE": WEBSITE_SHORT_TITLE,  # noqa: F405 (core setting)
+    "DESCRIPTION": os.getenv(
+        "PROJECT_DESCRIPTION", "Your project description"
+    ),
+    "VERSION": PROJECT_VERSION,  # noqa: F405 (core setting)
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
 }
-
-# Django Defender
-DEFENDER_REDIS_URL = REDIS_URL
-""" :py:class:`str`: The Redis url for defender.
-"""
-DEFENDER_COOLOFF_TIME = 60
-""" integer: Period of inactivity after which old failed login attempts will be forgotten
-"""
-DEFENDER_LOGIN_FAILURE_LIMIT = 3
-""" integer: The number of login attempts allowed before a record is created for the failed login.
-"""
-DEFENDER_STORE_ACCESS_ATTEMPTS = True
-""" boolean: Store the login attempt to the database.
-"""
-DEFENDER_USE_CELERY = True
-""" boolean: Use Celery to store the login attempt to the database.
-"""
-DEFENDER_LOCKOUT_URL = "/locked"
-""" string: url to the defender error page (defined in core_main_app)
-"""
 
 # Django simple-menu
 MENU_SELECT_PARENTS = False
@@ -441,7 +422,6 @@ if LOGGING_DB:
 
 
 # SSL
-
 if SERVER_URI.lower().startswith("https"):  # noqa: F405 (core setting)
     # Activate HTTPS
     os.environ["HTTPS"] = "on"
@@ -455,6 +435,31 @@ if SERVER_URI.lower().startswith("https"):  # noqa: F405 (core setting)
 
     # Set x-frame options
     X_FRAME_OPTIONS = "SAMEORIGIN"
+
+if "defender" not in INSTALLED_APPS:
+    INSTALLED_APPS = INSTALLED_APPS + ("defender",)
+
+if "defender.middleware.FailedLoginMiddleware" not in MIDDLEWARE:
+    MIDDLEWARE = MIDDLEWARE + ("defender.middleware.FailedLoginMiddleware",)
+# Django Defender
+DEFENDER_REDIS_URL = REDIS_URL
+""" :py:class:`str`: The Redis url for defender.
+"""
+DEFENDER_COOLOFF_TIME = 60
+""" integer: Period of inactivity after which old failed login attempts will be forgotten
+"""
+DEFENDER_LOGIN_FAILURE_LIMIT = 3
+""" integer: The number of login attempts allowed before a record is created for the failed login.
+"""
+DEFENDER_STORE_ACCESS_ATTEMPTS = True
+""" boolean: Store the login attempt to the database.
+"""
+DEFENDER_USE_CELERY = True
+""" boolean: Use Celery to store the login attempt to the database.
+"""
+DEFENDER_LOCKOUT_URL = "/locked"
+""" string: url to the defender error page (defined in core_main_app)
+"""
 
 if ENABLE_SAML2_SSO_AUTH:  # noqa: F405 (core setting)
     import saml2
@@ -496,7 +501,8 @@ if ENABLE_SAML2_SSO_AUTH:  # noqa: F405 (core setting)
 
     # Configure Pysaml2
     SAML_CONFIG = load_saml_config_from_env(
-        server_uri=SERVER_URI, base_dir=BASE_DIR  # noqa: F405 (core setting)
+        server_uri=SERVER_URI,  # noqa: F405 (core setting)
+        base_dir=BASE_DIR,  # noqa: F405 (core setting)
     )
     SAML_ACS_FAILURE_RESPONSE_FUNCTION = (
         "core_main_app.views.user.views.saml2_failure"
@@ -537,3 +543,10 @@ if ENABLE_HANDLE_PID:  # noqa: F405 (core setting)
             },
         },
     }
+
+LOGIN_URL = "core_main_app_login"
+
+# Default view for Django Exception Reports
+DEFAULT_EXCEPTION_REPORTER_FILTER = (
+    "core_main_app.views.admin.views.CustomExceptionReporter"
+)

@@ -2,7 +2,7 @@
 
 <div id="footer">
     <div class="d-flex">
-        <div class="mr-auto">
+        <div class="{% if BOOTSTRAP_VERSION|first == "4" %}mr-auto{% elif BOOTSTRAP_VERSION|first == "5"  %}me-auto{% endif %}">
             CDCS Version {% include "theme/footer/version.html" %}
         </div>
         <div id="footer-right" class="d-flex">
