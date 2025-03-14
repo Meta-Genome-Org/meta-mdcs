@@ -8,6 +8,12 @@
 	@author Philippe Dessauw
 */
 
+/* Custom CSS */
+	.resizable-image {
+		max-width: 100%;
+		height: auto;
+	}
+
 /* Reset */
 
 	/*html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {*/
@@ -294,11 +300,11 @@
 	}
 
 	.row > * {
-		padding: 50px 0 0 50px;
+		padding: 45px 0 10px 50px;
 	}
 
 	.row {
-		margin: -50px 0 -1px -50px;
+		margin: -50px 0 35px -50px;
 	}
 
 	.row.uniform > * {
@@ -559,7 +565,7 @@
 		}
 
 		.row.\35 0\25 {
-			margin: -20px 0 -1px -20px;
+			margin: -20px 0 -1px 0px;
 		}
 
 		.row.uniform.\35 0\25 > * {
@@ -567,7 +573,7 @@
 		}
 
 		.row.uniform.\35 0\25 {
-			margin: -20px 0 -1px -20px;
+			margin: -20px 0 -1px 0px;
 		}
 
 		.row.\32 5\25 > * {
@@ -722,7 +728,7 @@
 	@media screen and (max-width: 1280px) {
 
 		.row > * {
-			padding: 30px 0 0 30px;
+			padding: 5px 0 0 5px;
 		}
 
 		.row {
@@ -1380,7 +1386,7 @@
 		}
 
 		.row {
-			margin: -20px 0 -1px -20px;
+			margin: -20px 0 -1px 0px;
 		}
 
 		.row.uniform > * {
@@ -1388,7 +1394,7 @@
 		}
 
 		.row.uniform {
-			margin: -20px 0 -1px -20px;
+			margin: -20px 0 -1px 0px;
 		}
 
 		.row.\32 00\25 > * {
@@ -1595,7 +1601,7 @@
 		}
 
 		.row {
-			margin: -20px 0 -1px -20px;
+			margin: -20px 0 -1px 0px;
 		}
 
 		.row.uniform > * {
@@ -1603,7 +1609,7 @@
 		}
 
 		.row.uniform {
-			margin: -20px 0 -1px -20px;
+			margin: -20px 0 -1px 0px;
 		}
 
 		.row.\32 00\25 > * {
@@ -1853,14 +1859,14 @@
 
 	/*p, ul, ol, dl, table, blockquote {*/
 	p, ul, ol, dl, blockquote {
-		margin: 0 0 2em 0;
+		margin: 0 0 1em 0;
 	}
 
 	h1, h2, h3, h4, h5, h6 {
 		color: inherit;
 		font-weight: 600;
 		line-height: 1.75em;
-		margin-bottom: 1em;
+		margin-bottom: 0.25em;
 	}
 
 		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
@@ -2337,7 +2343,7 @@
 
 	#nav {
 		cursor: default;
-		background-color: #925520;
+		background-color: teal;
 		padding: 0;
 		text-align: right;
 		-webkit-box-shadow: 0 2px 10px 1px #6E6E6E;
@@ -2379,7 +2385,7 @@
 
 				#nav > ul > li > a:hover,
 				#nav > ul > li > div > a:hover {
-					background-color: #774b26;
+					background-color: gray;
 				}
 
 				#nav > ul > li > ul {
@@ -2514,7 +2520,7 @@
 	#footer {
 		color: white;
 		height: 3em;
-        background-color: #925520;
+        background-color: teal;
         margin-top: 1em;
         width: 100%;
 
@@ -2779,7 +2785,7 @@
 				width: 100%;
 				z-index: 10001;
 				height: 44px;
-				background-color: #925520;
+				background-color: teal;
 				line-height: 44px;
 				webkit-box-shadow: 0 2px 10px 1px #6E6E6E;
                 box-shadow: 0 2px 10px 1px #6E6E6E;

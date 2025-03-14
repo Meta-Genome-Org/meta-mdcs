@@ -1,27 +1,51 @@
 {% load static %}
-<div class="row">
-    <div class="row justify-content-center" id="intro">
-        <div class="col-md-5">
-            <h1>{{ CUSTOM_TITLE }}</h1>
-            <p>
-                This system allows for the curation of Material Data in a repository using
-                predefined templates.
-            </p>
-            <p>
-                This is being developed at the National Institute of Standards and Technology and
-                is made available to solicit comments from the Material Science community. Please
-                do not enter any proprietary data into this system.
-            </p>
+<div class="row justify-content-center pt-3" id="intro">
+    <div class="col-md-5">
+        <div class="text-center">
+            <h2>{{ CUSTOM_TITLE }}</h2>
         </div>
-        <div class="col-md-3">
-            <img id="mgi-diagram" src="{% static 'core_main_app/img/mgi_diagram.jpg' %}"
-                 alt="Material Genome Initiative diagram">
-        </div>
+        <p>
+            The MetaGenome Project is hosting an instance of the NIST Data Curation System,
+            this system allows for the curation of Metamaterials Data in a repository using
+            predefined templates.
+        </p>
+        <p>
+            This is being developed at the National Institute of Standards and Technology and
+            is made available to solicit comments from the Material Science community.
+        </p>
+        <p class="text-center"><b>Please do not enter any proprietary data into this system.</b>  </p>
+        <p class="text-center">
+            <b>Our GitHub Organisation: <a href="https://github.com/Meta-Genome-Org/">Meta-Genome-Org</a></b>
+        </p>
     </div>
 </div>
-<div class="row justify-content-center">
+<div class="row justify-content-center text-center pt-3">
+    <div class="col-md-6 mx-auto text-center iframe-container d-flex align-items-center">
+        <iframe src="https://www.youtube.com/embed/m6mZXjL0uaA"
+            title="MetaGenome MDCS Submission Demo" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+        </iframe>
+    </div>
+</div>
+<div class="row justify-content-center pt-3">
     <div class="col-md-5" id="tiles">
     </div>
     <div class="col-md-5" id="templates">
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div id="partner-info">
+        <h2>Supported and trusted by:</h2>
+    </div>
+</div>
+<div class="row justify-content-center pt-3">
+    <div class="d-flex justify-content-around">
+        <div class="partner-logo col-md-5">
+            <img src="{% static 'core_main_app/img/Royce-Logo.png' %}" class="resizable-image" alt="Henry Royce Institute Logo">
+        </div>
+        <div class="partner-logo col-md-5">
+            <img src="{% static 'core_main_app/img/UKMMN-Logo.png' %}" class="resizable-image" alt="UK Metamaterials Network Logo">
+        </div>
     </div>
 </div>

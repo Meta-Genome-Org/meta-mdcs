@@ -55,6 +55,7 @@ def tiles(request):
 
         context["tiles"].append(curate_tile)
 
+    """
     if "core_explore_example_app" in installed_apps:
         explore_example_tile = {
             "logo": "fa-flask",
@@ -64,6 +65,7 @@ def tiles(request):
         }
 
         context["tiles"].append(explore_example_tile)
+    """
 
     if "core_explore_keyword_app" in installed_apps:
         explore_keywords_tile = {
@@ -74,7 +76,8 @@ def tiles(request):
         }
 
         context["tiles"].append(explore_keywords_tile)
-
+    
+    """
     if "core_composer_app" in installed_apps:
         compose_tile = {
             "logo": "fa-file-code",
@@ -84,5 +87,6 @@ def tiles(request):
         }
 
         context["tiles"].append(compose_tile)
+    """
 
     return render(request, "mdcs_home/tiles.html", context)

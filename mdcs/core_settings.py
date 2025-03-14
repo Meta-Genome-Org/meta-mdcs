@@ -10,15 +10,15 @@ PROJECT_VERSION = os.getenv("PROJECT_VERSION", "3.14.0")
 """
 
 # Website customization
-WEBSITE_SHORT_TITLE = "MDCS"
-CUSTOM_DATA = "Materials Data"
+WEBSITE_SHORT_TITLE = "MetaGenome Project"
+CUSTOM_DATA = "Metamaterials Data"
 CUSTOM_NAME = (
     os.environ["SERVER_NAME"] if "SERVER_NAME" in os.environ else "Curator"
 )
-CUSTOM_TITLE = "Materials Data Curation System"
+CUSTOM_TITLE = "MetaGenome Project"
 CUSTOM_SUBTITLE = "Part of the Materials Genome Initiative"
 CURATE_MENU_NAME = "Data Curation"
-WEBSITE_ADMIN_COLOR = "yellow"
+WEBSITE_ADMIN_COLOR = "blue-light"
 # black, black-light, blue, blue-light, green, green-light, purple, purple-light, red, red-light, yellow, yellow-light
 
 DATA_SOURCES_EXPLORE_APPS = [
@@ -192,7 +192,7 @@ ENABLE_XML_ENTITIES_TOOLTIPS = True
 """ :py:class:`bool`: Enable XML entities tooltips during curation.
 """
 
-CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT = False
+CAN_ANONYMOUS_ACCESS_PUBLIC_DOCUMENT = True
 """ :py:class:`bool`: Can anonymous user access public document.
 """
 
