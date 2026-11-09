@@ -1,0 +1,94 @@
+name: Sync upstream MDCS release
+
+# Weekly check for a new usnistgov/MDCS release. When master doesn't contain
+# the latest release yet, merge it onto a sync-upstream-<version> branch and
+# open a PR for review. If the merge conflicts with our customisations, open
+# an issue instead, since that needs resolving by hand.
+#
+# Requires Settings → Actions → General → "Allow GitHub Actions to create and
+# approve pull requests". PRs opened with GITHUB_TOKEN don't trigger other
+# workflows, so nothing here builds or deploys anything.
+
+on:
+  schedule:
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency: sync-upstream
+
+env:
+  UPSTREAM_REPO: usnistgov/MDCS
+  BASE: master
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.BASE }}
+          fetch-depth: 0
+
+      - name: Merge latest upstream release
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Latest published (non-prerelease) upstream release
+          tag=$(gh api "repos/$UPSTREAM_REPO/releases/latest" --jq .tag_name)
+          git fetch --no-tags "https://github.com/$UPSTREAM_REPO.git" \
+            "+refs/tags/$tag:refs/upstream/$tag"
+          up="refs/upstream/$tag"
+          echo "Latest upstream release: $tag ($(git rev-parse --short "$up^{commit}"))"
+
+          if git merge-base --is-ancestor "$up" HEAD; then
+            echo "$BASE already contains $tag; nothing to do."
+            exit 0
+          fi
+
+          branch="sync-upstream-$tag"
+          if [ -n "$(gh pr list --head "$branch" --state open --json number --jq '.[].number')" ]; then
+            echo "A PR from $branch is already open; nothing to do."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+
+          notes="https://github.com/$UPSTREAM_REPO/releases/tag/$tag"
+          if git merge --no-ff --no-edit -m "Merge $UPSTREAM_REPO $tag into meta-genome customisations" "$up"; then
+            git push --force origin "$branch"
+            gh pr create --base "$BASE" --head "$branch" \
+              --title "Sync with $UPSTREAM_REPO $tag" \
+              --body "$(printf '%s\n' \
+                "Merges upstream [$UPSTREAM_REPO $tag]($notes) into \`$BASE\`. The merge applied cleanly." \
+                "" \
+                "Opened automatically by the \`sync-upstream\` workflow. Before merging:" \
+                "- Read the [release notes]($notes) for migrations or settings changes." \
+                "- After merging, bump \`CDCS_COMMIT\` in meta-cdcs-docker's \`build-mdcs.yml\` to deploy it.")"
+          else
+            conflicts=$(git diff --name-only --diff-filter=U | sed 's/^/- `/; s/$/`/')
+            git merge --abort
+            title="Upstream $UPSTREAM_REPO $tag conflicts with $BASE"
+            if [ -z "$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[].number')" ]; then
+              gh issue create --title "$title" \
+                --body "$(printf '%s\n' \
+                  "[$UPSTREAM_REPO $tag]($notes) doesn't merge cleanly into \`$BASE\`. Conflicting files:" \
+                  "" "$conflicts" "" \
+                  "To resolve by hand:" \
+                  '```' \
+                  "git fetch https://github.com/$UPSTREAM_REPO.git tag $tag" \
+                  "git switch -c $branch origin/$BASE" \
+                  "git merge $tag   # resolve conflicts, then commit and open a PR" \
+                  '```')"
+            fi
+            echo "::warning::$tag conflicts with $BASE; opened an issue"
+          fi
