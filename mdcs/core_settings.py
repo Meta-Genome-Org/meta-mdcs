@@ -4,7 +4,7 @@ import os
 
 SERVER_URI = os.environ["SERVER_URI"] if "SERVER_URI" in os.environ else None
 
-PROJECT_VERSION = os.getenv("PROJECT_VERSION", "3.23.0")
+PROJECT_VERSION = os.getenv("PROJECT_VERSION", "3.24.0")
 """ :py:class:`str`: Project version number.
 """
 
@@ -27,7 +27,7 @@ DATA_SOURCES_EXPLORE_APPS = [
 # Lists in data not stored if number of elements is over the limit (e.g. 100)
 SEARCHABLE_DATA_OCCURRENCES_LIMIT = None
 
-PARSER_DOWNLOAD_DEPENDENCIES = True
+PARSER_DOWNLOAD_DEPENDENCIES = False
 """ boolean: Does the parser download dependencies
 """
 
